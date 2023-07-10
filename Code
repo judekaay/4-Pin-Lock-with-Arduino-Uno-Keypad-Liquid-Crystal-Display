@@ -1,0 +1,185 @@
+#include <LiquidCrystal.h>
+
+#include <Key.h>
+#include <Keypad.h>
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 13, d7 = 9;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //four columns
+char hexaKeys[ROWS][COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+byte rowPins[ROWS] = {3, 8, 7, 6}; 
+byte colPins[COLS] = {A5, A4, 2, 10};
+
+Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+char password[5] = "9999";
+char enteredPassword[5];
+char customKey=0;
+int i = 0;
+int j = 0;
+int z = 0;
+
+void setup(){
+  lcd.begin(16, 2);
+  Serial.begin(9600);
+  lcd.print("Enter Password:");
+  lcd.setCursor(0, 1);
+}
+  
+void loop(){
+lcd.blink();
+
+customKey = customKeypad.getKey();
+  
+ if (customKey == '#')
+  {
+    memset(customKey, '\0', sizeof(customKey));
+    changePassword();
+  }
+  else if (customKey == '*') {
+   reset();
+}
+  else if (customKey)
+  {
+    
+    enteredPassword[i++]=customKey;
+    
+    lcd.print(customKey);
+  }
+  if (i==4)
+  {
+    enteredPassword[i] = '\0';
+    if (strcmp(password, enteredPassword) == 0) 
+    {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Password is");
+      lcd.setCursor(0, 1);
+      lcd.print("Correct");
+    }
+    else{
+      z++;
+      lcd.clear();
+      lcd.noBlink();
+      memset(enteredPassword, '\0', sizeof(enteredPassword));
+      i = 0;
+      if (z == 3)
+        {
+            z = 0;
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("10");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("9");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("8");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("7");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("6");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("5");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("4");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("3");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("2");
+          delay(1000);
+          lcd.clear();
+          lcd.print("Locked Out");
+          lcd.setCursor(0, 1);
+          lcd.print("1");
+          delay(1000);
+          lcd.clear();
+          delay(200);
+      lcd.blink();
+      lcd.print("Enter password:");
+      lcd.setCursor(0, 1);
+        }
+      else{
+      lcd.print("Wrong Password");
+      lcd.setCursor(0, 1);
+      lcd.print("Try Again");
+      delay(3000);
+      lcd.clear();
+      delay(200);
+      lcd.blink();
+      lcd.print("Enter password:");
+      lcd.setCursor(0, 1);
+      }
+      
+    }
+  }
+  
+}
+void changePassword(){
+  memset(password, '\0', sizeof(enteredPassword));
+  lcd.clear();
+  lcd.print("Reset Password:");
+  lcd.setCursor(0, 1);
+  char length = customKeypad.getKey();
+  j = 0;
+  while (j < 4)
+  {
+    char key = customKeypad.getKey();
+  if (key)
+  {
+  password[j++] = key;
+  lcd.print(key);
+  }
+  }
+    lcd.clear();
+    delay(200);
+    lcd.blink();
+    lcd.print("Enter password:");
+    lcd.setCursor(0, 1);
+}
+void reset()
+{
+    lcd.noBlink();
+    memset(enteredPassword, '\0', sizeof(enteredPassword));
+    i = 0;
+    delay(100);
+    lcd.clear();
+    lcd.print("Reset");
+    delay(1000);
+    lcd.clear();
+    delay(200);
+    lcd.blink();
+    lcd.print("Enter password:");
+    lcd.setCursor(0, 1);
+
+}
+
+
